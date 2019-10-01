@@ -1,6 +1,6 @@
-# Echo Bot template
+# AZ Sevai
 
-This bot has been created using [Bot Framework](https://dev.botframework.com), it shows how to create a simple bot that accepts input from the user and echoes it back.
+This bot has been created using [Bot Framework](https://dev.botframework.com).
 
 ## Prerequisites
 - [Node.js](https://nodejs.org) version 10.14 or higher
@@ -31,8 +31,9 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
 - Enter a Bot URL of `http://localhost:3978/api/messages`
 
 # Deploy the bot to Azure
+Commits to this Repo will be automatically synced into Azure.
+Contiuous Integration is configured
 
-To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](https://aka.ms/azuredeployment) for a complete list of deployment instructions.
 
 ## Further reading
 - [Bot Framework Documentation](https://docs.botframework.com)
