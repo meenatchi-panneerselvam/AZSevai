@@ -6,7 +6,7 @@ const { QnAMaker } = require('botbuilder-ai');
 
 process.env.QnAEndpointKey = "538602c9-e614-462e-9ece-042d33fdf1f5"
 
-class QnABot extends ActivityHandler {
+class AZSevai extends ActivityHandler {
     constructor() {
         super();
 
