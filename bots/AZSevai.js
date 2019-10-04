@@ -4,7 +4,9 @@
 const { ActivityHandler } = require('botbuilder');
 const { QnAMaker } = require('botbuilder-ai');
 
+process.env.QnAKnowledgebaseId = "211d6069-9de1-4286-a647-628fcb586f2f"
 process.env.QnAEndpointKey = "538602c9-e614-462e-9ece-042d33fdf1f5"
+process.env.QnAEndpointHostName = "https://azsevaiqna1.azurewebsites.net/qnamaker"
 
 class AZSevai extends ActivityHandler {
     constructor() {
