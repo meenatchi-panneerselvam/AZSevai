@@ -53,7 +53,27 @@ class QnABot extends ActivityHandler {
     
                 // If no answers were returned from QnA Maker, reply with help.
                 } else {
-                    await context.sendActivity('No QnA Maker answers were found.');
+                    // await context.sendActivity('No QnA Maker answers were found.');
+                    console.log('No QnA Maker answers were found.');
+
+                    // -> Get Intent from LUIS
+                    
+
+                    // -> If post needed, prompt for User credentials.
+                    // --> Convert Credentials into a BASIC Authorization Key
+                    // --> Prepare the code 
+                    // ----> Sample Code 
+                            // GET /sap/opu/odata/sap/ProcessManagement/BranchSet?$format=json HTTP/1.1
+                            // Host: shs-ci-sbx.sap.astrazeneca.net:8010
+                            // Authorization: Basic S1BSRzU1NjpIYXJpQDExMlBlcmk=
+                            // Cache-Control: no-cache
+                            // Postman-Token: c7cd6371-afff-f688-c1ca-9c24a7d70d38
+
+                    // -> Trigger Get or Post Request to Solman via Mulesoft 
+                    
+
+
+
                 }
     
             }
@@ -64,4 +84,4 @@ class QnABot extends ActivityHandler {
     }
 }
 
-module.exports.QnABot = QnABot;
+module.exports.AZSevai = AZSevai;

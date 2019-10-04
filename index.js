@@ -11,20 +11,11 @@ const restify = require('restify');
 const { BotFrameworkAdapter } = require('botbuilder');
 
 // This bot's main dialog.
-// const { EchoBot } = require('./bot');
-const { QnABot } = require('./bots/QnABot');
+const { AZSevai } = require('./bots/AZSevai');
 
 // Import required bot configuration.
 const ENV_FILE = path.join(__dirname, '.env');
 dotenv.config({ path: ENV_FILE });
-
-// // Create HTTP server
-// const server = restify.createServer();
-// server.listen(process.env.port || process.env.PORT || 3978, () => {
-//     console.log(`\n${ server.name } listening to ${ server.url }`);
-//     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
-//     console.log(`\nTo talk to your bot, open the emulator select "Open Bot"`);
-// });
 
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about how bots work.
@@ -46,8 +37,7 @@ adapter.onTurnError = async (context, error) => {
 };
 
 // Create the main dialog.
-// const bot = new EchoBot();
-const bot = new QnABot();
+const bot = new AZSevai();
 
 // Create HTTP server
 const server = restify.createServer();
