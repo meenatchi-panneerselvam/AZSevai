@@ -6,13 +6,13 @@
             "type": "endpoint",
             "appId": "6c282717-44e0-4f16-b4e4-25d0c1a520da",
             "appPassword": "9|bT=U?{90KcW!#/q{/[hi6N:[d-qHp0",
-            "endpoint": "http://localhost:3978/api/messages",
-            "id": "7f429040-e40c-11e9-ab0d-496eb0842f70",
-            "name": "http://localhost:3978/api/messages"
+            "endpoint": "http://localhost:3999/api/messages",
+            "id": "27c5d130-e6b7-11e9-9d90-c72dde268eb5",
+            "name": "http://localhost:3999/api/messages"
         }
     ],
     "padlock": "",
     "version": "2.0",
     "overrides": null,
-    "path": "C:\\Users\\KPRG556\\Box Sync\\Gits\\HackAPI\\AZSevai.bot"
+    "path": "C:\\Users\\KPRG556\\Box Sync\\Gits\\AZSevai\\AZSevai.bot"
 }

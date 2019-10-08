@@ -1,0 +1,46 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "spacing": "medium",
+      "size": "default",
+      "weight": "bolder",
+      "text": "Welcome to AZSevai!",
+      "wrap": true,
+      "maxLines": 0
+    },
+    {
+      "type": "TextBlock",
+      "size": "default",
+      "isSubtle": "true",
+      "text": "I will be able to assist you with below : ",
+      "wrap": true,
+      "maxLines": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Quick link for a Change Document",
+      "data": "CD"
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Enquire Change Document Status ?",
+      "data": "CD Status"
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Is Change Document ready for ABAP Review ?",
+      "data": "CD Ready for ABAP Review"
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Is Change Document ready for OC TA ?",
+      "data": "CD Ready for OCTA"
+    }
+  ]
+}
