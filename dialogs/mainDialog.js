@@ -27,8 +27,8 @@ class MainDialog extends ComponentDialog {
             .addDialog(controlDialog)
             .addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
                        this.introStep.bind(this),
-                    //    this.supportStep.bind(this),
-                       this.actStep.bind(this)
+                       this.luisStep.bind(this),
+                       this.muleStep.bind(this)
             ]));
 
         this.initialDialogId = MAIN_WATERFALL_DIALOG;
@@ -53,92 +53,88 @@ class MainDialog extends ComponentDialog {
 
     /**
      * First step in the waterfall dialog. Prompts the user for a command.
+     * Collects the CD Number and relevant Info
      */
     async introStep(stepContext) {
-        // if (!this.luisRecognizer.isConfigured) {
-        //     const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
-        //     await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
-        //     return await stepContext.next();
-        // }
-
-        // // const welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
-        // // return await stepContext.sendActivity({ attachments: [welcomeCard] });    
 
         const messageText = stepContext.options.restartMsg ? stepContext.options.restartMsg : 'Try selecting from the options above.';
         const promptMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
         return await stepContext.prompt('TextPrompt', { prompt: promptMessage });
     
-        // we may not need an intro step as we wait for user input
-        // return await stepContext.next();
     }
 
      /**
-     * Second step in the waterfall.  This will use LUIS to attempt to extract the origin, destination and travel dates.
+     * Second step in the waterfall.  This will use LUIS to attempt to extract the Intent and other info.
      * Then, it hands off to the bookingDialog child dialog to collect any remaining details.
      */
-    async actStep(stepContext) {
+    async luisStep(stepContext) {
         const changeDocuments = {};
 
+        //TODO: Ensure that Change Documents array carrying nummber and itent is flown in here.
+
         if (!this.luisRecognizer.isConfigured) {
-            // LUIS is not configured, we just run the BookingDialog path.
+            const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
+            await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
+            return await stepContext.next();
+        }
+
+        if (!this.luisRecognizer.isConfigured) {
+            // LUIS is not configured, we just run the controlDialog path.
             return await stepContext.beginDialog('controlDialog', changeDocuments);
         }
 
-        // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
-        const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context);
-        switch (LuisRecognizer.topIntent(luisResult)) {
-        case 'BookFlight':
-            // Extract the values for the composite entities from the LUIS result.
-            const fromEntities = this.luisRecognizer.getFromEntities(luisResult);
-            const toEntities = this.luisRecognizer.getToEntities(luisResult);
+        //TODO: Prepare what LUIS should determine from our request 
 
-            // Show a warning for Origin and Destination if we can't resolve them.
-            await this.showWarningForUnsupportedCities(stepContext.context, fromEntities, toEntities);
+        // // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
+        // const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context);
+        // switch (LuisRecognizer.topIntent(luisResult)) {
+        // case 'BookFlight': //TODO: Change this one
+        //     // Extract the values for the composite entities from the LUIS result.
+        //     const fromEntities = this.luisRecognizer.getFromEntities(luisResult);
+        //     const toEntities = this.luisRecognizer.getToEntities(luisResult);
 
-            // Initialize changeDocuments with any entities we may have found in the response.
-            changeDocuments.destination = toEntities.airport;
-            changeDocuments.origin = fromEntities.airport;
-            changeDocuments.travelDate = this.luisRecognizer.getTravelDate(luisResult);
-            console.log('LUIS extracted these booking details:', JSON.stringify(changeDocuments));
+        //     // Show a warning for Origin and Destination if we can't resolve them.
+        //     await this.showWarningForUnsupportedCities(stepContext.context, fromEntities, toEntities);
 
-            // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
-            return await stepContext.beginDialog('controlDialog', changeDocuments);
+        //     // Initialize changeDocuments with any entities we may have found in the response.
+        //     changeDocuments.destination = toEntities.airport;
+        //     changeDocuments.origin = fromEntities.airport;
+        //     changeDocuments.travelDate = this.luisRecognizer.getTravelDate(luisResult);
+        //     console.log('LUIS extracted these booking details:', JSON.stringify(changeDocuments));
 
-        case 'GetWeather':
-            // We haven't implemented the GetWeatherDialog so we just display a TODO message.
-            const getWeatherMessageText = 'TODO: get weather flow here';
-            await stepContext.context.sendActivity(getWeatherMessageText, getWeatherMessageText, InputHints.IgnoringInput);
-            break;
+        //     // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
+        //     return await stepContext.beginDialog('controlDialog', changeDocuments);
 
-        default:
-            // Catch all for unhandled intents
-            const didntUnderstandMessageText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${ LuisRecognizer.topIntent(luisResult) })`;
-            await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
-        }
+        // case 'GetWeather': //TODO: Change this one
+        //     // We haven't implemented the GetWeatherDialog so we just display a TODO message.
+        //     const getWeatherMessageText = 'TODO: get weather flow here';
+        //     await stepContext.context.sendActivity(getWeatherMessageText, getWeatherMessageText, InputHints.IgnoringInput);
+        //     break;
+
+        // default:
+        //     // Catch all for unhandled intents
+        //     const didntUnderstandMessageText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${ LuisRecognizer.topIntent(luisResult) })`;
+        //     await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
+        // }
 
         return await stepContext.next();
     }
 
-    /**
-     * Shows a warning if the requested From or To cities are recognized as entities but they are not in the Airport entity list.
-     * In some cases LUIS will recognize the From and To composite entities as a valid cities but the From and To Airport values
-     * will be empty if those entity values can't be mapped to a canonical item in the Airport.
+     /**
+     * Third step in the waterfall.  This will use mulesoft to attempt to extract details from Solman 
+     * Then, it hands off to the bookingDialog child dialog to collect any remaining details.
      */
-    async showWarningForUnsupportedCities(context, fromEntities, toEntities) {
-        // const unsupportedCities = [];
-        // if (fromEntities.from && !fromEntities.airport) {
-        //     unsupportedCities.push(fromEntities.from);
-        // }
+    async muleStep(stepContext) {
+        const changeDocuments = {};
 
-        // if (toEntities.to && !toEntities.airport) {
-        //     unsupportedCities.push(toEntities.to);
-        // }
+        //TODO: Ensure that Change Documents array carrying nummber and updated itent is flown in here. 
 
-        // if (unsupportedCities.length) {
-        //     const messageText = `Sorry but the following airports are not supported: ${ unsupportedCities.join(', ') }`;
-        //     await context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
-        // }
+        //TODO: Test the connectivity to Mulesoft 
+
+
+        return await stepContext.next();
     }
+
 }
 
 module.exports.MainDialog = MainDialog;

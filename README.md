@@ -1,4 +1,4 @@
-# AZ Sevai
+# AZ Sevai  v0.05
 
 This bot has been created using [Bot Framework](https://dev.botframework.com).
 
@@ -8,17 +8,46 @@ This bot has been created using [Bot Framework](https://dev.botframework.com).
     # determine node version
     node --version
     ```
-# To run the bot locally
-- Download the bot code from the Build blade in the Azure Portal (make sure you click "Yes" when asked "Include app settings in the downloaded zip file?").
-    - If you clicked "No" you will need to copy all the Application Settings properties from your App Service to your local .env file.
-- Install modules
+# Change to the repository
+
+All merges to be repository are to be reviewed.
+
+- Start by creating a fork from master/origin.
+- Perform the code corrections.
+- Commit the changes into new branch.
+- Create a pull request to merge the change int the master repo.
+
+Repo owner is allowed to do changes directly.
+
+Before doing changes re-sync your repository. Read [how to Sync a Fork.](https://help.github.com/en/articles/syncing-a-fork)
+
+# Running the bot locally
+- Clone/Download the Repo.
     ```bash
-    npm install
+    # clone the repo 
+    git clone https://github.com/ireps/AZSevai.git
     ```
-- Run the bot
+- Configure/Create .env file in the Local Folder.
+Never commit the filled .env file as it contins Client ID and Secret passwords.
     ```bash
-    npm start
+    # .env File 
+    MicrosoftAppId=#<value here>
+    MicrosoftAppPassword=#<value here>
+    ScmType=None
+    LuisAppId=#<value here>
+    LuisAPIKey=#<value here>
+    LuisAPIHostName=#<value here>
+    QnAKnowledgebaseId=#<value here>
+    QnAEndpointKey=#<value here>
+    QnAEndpointHostName=#<value here>
     ```
+- Open the [Node.js](https://nodejs.org) terminal and got to the repo local folder. Run index.js file.
+    ```bash
+    # Start the bot 
+    node index.js
+    ```
+    
+    If there are no syntax errors, this will start a local web server with port number to be used as BOT URL ( EndPoint URL ) in next step.
 
 # Testing the bot using Bot Framework Emulator
 
@@ -28,23 +57,12 @@ This bot has been created using [Bot Framework](https://dev.botframework.com).
 ## Connect to the bot using Bot Framework Emulator
 - Launch Bot Framework Emulator
 - File -> Open Bot
+    - If there is no bot already configured, create new configuration, by providing Bot's EndPoint URL and App ID and Password. 
+    - This step will create the .bot file which can be opened via the Emulator.
+
 - Enter a Bot URL of `http://localhost:3978/api/messages`
 
 # Deploy the bot to Azure
 Commits to this Repo will be automatically synced into Azure.
 Contiuous Integration is configured
 
-
-## Further reading
-- [Bot Framework Documentation](https://docs.botframework.com)
-- [Bot Basics](https://docs.microsoft.com/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0)
-- [Azure Bot Service Introduction](https://docs.microsoft.com/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
-- [Azure Bot Service Documentation](https://docs.microsoft.com/azure/bot-service/?view=azure-bot-service-4.0)
-- [Deploy your bot to Azure](https://aka.ms/azuredeployment)
-- [Azure CLI](https://docs.microsoft.com/cli/azure/?view=azure-cli-latest)
-- [Azure Portal](https://portal.azure.com)
-- [Activity processing](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-concept-activity-processing?view=azure-bot-service-4.0)
-- [Language Understanding using LUIS](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/)
-- [Channels and Bot Connector Service](https://docs.microsoft.com/en-us/azure/bot-service/bot-concepts?view=azure-bot-service-4.0)
-- [Restify](https://www.npmjs.com/package/restify)
-- [dotenv](https://www.npmjs.com/package/dotenv)
