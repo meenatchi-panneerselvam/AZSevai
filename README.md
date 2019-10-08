@@ -1,4 +1,4 @@
-# AZ Sevai  v0.05
+# AZ Sevai v0.5
 
 This bot has been created using [Bot Framework](https://dev.botframework.com).
 
