@@ -2,12 +2,15 @@
 // Licensed under the MIT License.
 
 // const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
-const { MessageFactory, InputHints, CardFactory } = require('botbuilder');
+import { MessageFactory, InputHints, CardFactory } from 'botbuilder';
 // const { LuisRecognizer } = require('botbuilder-ai');
-const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
+import { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } from 'botbuilder-dialogs';
 
-const OCTACard = require('../resources/octaCard.json');
-const WelcomeCard = require('../resources/welcomeCard.json');
+import WelcomeCard from '../resources/welcomeCard.json';
+import OCTACard    from '../resources/octaCard.json';
+import ReviewCard  from '../resources/reviewCard.json';
+import StatusCard  from '../resources/statusCard.json';
+import LinkCard    from '../resources/linkCard.json';
 
 // const CONFIRM_PROMPT = 'confirmPrompt';
 // const DATE_RESOLVER_DIALOG = 'dateResolverDialog';
@@ -128,6 +131,7 @@ class MainDialog extends ComponentDialog {
 
             //TODO: Prepare what LUIS should determine from our request 
 
+            // intent should be  "OCTA" or "review" or "status" or "link"
             
 
             // // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
@@ -189,37 +193,72 @@ class MainDialog extends ComponentDialog {
      * Final step in the waterfall.  This will use display the requsted information back to the user
      */
     async finalStep(stepContext) {
-
         if(stepContext.values.changeDocument.intent){
             switch (stepContext.values.changeDocument.intent)
             {
                 case "OCTA":                
                     const octaCard = CardFactory.adaptiveCard(OCTACard);
 
-                    octaCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.system;
+                    // For Updating System and Change Document Number
+                    octaCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.region;
                     octaCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
-                    octaCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.crStatus;  // For Code Review Status
-                    octaCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.trStatus;  // For Transports Released
-                    octaCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.docStatus; // For Documents Approval
-                    octaCard.content.actions[0].url = stepContext.values.changeDocument.url;                         // For Updating CD URL
+
+                    // For Readiness for OCTA Status (READY or NOT READY)                  
+                    text = octaCard.content.body[0].columns[1].items[2].text = stepContext.values.changeDocument.reviewStatus;
+                    octaCard.content.body[0].columns[1].items[2].color = (text = "READY") ? "Good" : "Attention"; 
+
+                    octaCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.status1; // For Code Review Status                 
+                    octaCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.status2; // For Transports Released
+                    octaCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.status3; // For Documents Approval
+ 
+                    octaCard.content.body[1].columns[1].items.map(function(x){if(x.text == "READY"){ x.color = "Good";}else{x.color = "Attention";} return x;})
+
+                    // For Updating CD URL
+                    octaCard.content.actions[0].url = stepContext.values.changeDocument.url;
                     await stepContext.context.sendActivity({ attachments: [octaCard] });
                     return await stepContext.next();
 
                 case "review":
                     const reviewCard = CardFactory.adaptiveCard(ReviewCard);
 
+                    // For Updating System and Change Document Number
+                    reviewCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.region;
+                    reviewCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
+
+                    // For Readiness for review Status (READY or NOT READY)
+                    reviewCard.content.body[0].columns[1].items[2].text = stepContext.values.changeDocument.reviewStatus;      
+                    reviewCard.content.body[0].columns[1].items[2].color = (text = "READY") ? "Good" : "Attention";              
+                    
+                    reviewCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.status1; // For CD In Review Status                    
+                    reviewCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.status2; // For ABAP Notes
+                    reviewCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.status3; // For Functional SignOff
+
+                    reviewCard.content.body[1].columns[1].items.map(function(x){if(x.text == "READY"){ x.color = "Good";}else{x.color = "Attention";} return x;})
+
+                    // For Updating CD URL
+                    reviewCard.content.actions[0].url = stepContext.values.changeDocument.url;
                     await stepContext.context.sendActivity({ attachments: [reviewCard] });
                     return await stepContext.next();
 
                 case "status":
                     const statusCard = CardFactory.adaptiveCard(StatusCard);
 
+                    // For Updating System and Change Document Number
+                    octaCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.region;
+                    octaCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
+
+                    // For Current CD Status (Color Control Not Required)
+                    octaCard.content.body[0].columns[1].items[2].text = stepContext.values.changeDocument.cdStatus;
+
+                    // For Updating CD URL
+                    statusCard.content.actions[0].url = stepContext.values.changeDocument.url;
                     await stepContext.context.sendActivity({ attachments: [statusCard] });
                     return await stepContext.next();          
 
                 case "link":
                     const linkCard = CardFactory.adaptiveCard(LinkCard);
-
+                    statusCard.content.actions[0].text = "Open CD " & stepContext.values.changeDocument.number;
+                    statusCard.content.actions[0].url = stepContext.values.changeDocument.url;  // For Updating CD URL
                     await stepContext.context.sendActivity({ attachments: [linkCard] });
                     return await stepContext.next();
             }
@@ -228,4 +267,5 @@ class MainDialog extends ComponentDialog {
     }
 }
 
-module.exports.MainDialog = MainDialog;
+const _MainDialog = MainDialog;
+export { _MainDialog as MainDialog };

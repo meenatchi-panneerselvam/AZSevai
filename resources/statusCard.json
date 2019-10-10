@@ -1,0 +1,73 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Europe SAP",
+                            "horizontalAlignment": "Left",
+                            "size": "ExtraLarge",
+                            "weight": "Bolder",
+                            "color": "Accent",
+                            "spacing": "Small",
+                            "id": "system"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "CD Status",
+                            "horizontalAlignment": "Left",
+                            "isSubtle": true,
+                            "weight": "Bolder",
+                            "size": "Large",
+                            "spacing": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "4100000012",
+                            "horizontalAlignment": "Right",
+                            "size": "ExtraLarge",
+                            "weight": "Bolder",
+                            "color": "Accent",
+                            "id": "changeDocument"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "In Development",
+                            "horizontalAlignment": "Right",
+                            "size": "Large",
+                            "spacing": "Small",
+                            "id": "cdStatus",
+                            "weight": "Bolder",
+                            "color": "Good"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Open Change Document",
+            "style": "positive",
+            "url": "DummyURL",
+            "id": "cdURL"
+        }
+    ],
+    "id": "status",
+    "lang": "Eng"
+}

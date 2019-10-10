@@ -22,7 +22,7 @@
                         },
                         {
                             "type": "TextBlock",
-                            "text": "OC TA Readiness",
+                            "text": "ABAP Review Readiness",
                             "horizontalAlignment": "Left",
                             "isSubtle": true,
                             "weight": "Bolder",
@@ -74,17 +74,17 @@
                         },
                         {
                             "type": "TextBlock",
-                            "text": "Code Review",
+                            "text": "CD in Review",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "Tasks Released",
+                            "text": "ABAP Notes",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "Documents Approved",
+                            "text": "Functional Signoff",
                             "spacing": "Small"
                         }
                     ]
@@ -105,7 +105,7 @@
                             "text": "Completed",
                             "horizontalAlignment": "Center",
                             "color": "Good",
-                            "id": "cdCRStatus"
+                            "id": "cdReviewStatus"
                         },
                         {
                             "type": "TextBlock",
@@ -113,7 +113,7 @@
                             "horizontalAlignment": "Right",
                             "spacing": "Small",
                             "color": "Attention",
-                            "id": "cdTaskStatus"
+                            "id": "cdABAPNotesStatus"
                         },
                         {
                             "type": "TextBlock",
@@ -121,7 +121,7 @@
                             "horizontalAlignment": "Right",
                             "spacing": "Small",
                             "color": "Attention",
-                            "id": "cdDocStatus"
+                            "id": "cdFuncStatus"
                         }
                     ]
                 }
@@ -137,12 +137,6 @@
             "id": "cdURL"
         }
     ],
-    "id": "OCTA",
-    "lang": "Eng",
-    "selectAction": {
-        "type": "Action.ToggleVisibility",
-        "targetElements": [],
-        "id": "OCTADETAILS",
-        "title": ""
-    }
+    "id": "review",
+    "lang": "Eng"
 }

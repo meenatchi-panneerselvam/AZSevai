@@ -1,0 +1,17 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "lang": "Eng",
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Open Change Document",
+            "style": "positive",
+            "url": "DummyURL",
+            "id": "cdURL"
+        }
+    ],
+    "id": "link"
+}
