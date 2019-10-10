@@ -6,12 +6,23 @@ const { MessageFactory, InputHints, CardFactory } = require('botbuilder');
 // const { LuisRecognizer } = require('botbuilder-ai');
 const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
 
+const OCTACard = require('../resources/octaCard.json');
 const WelcomeCard = require('../resources/welcomeCard.json');
 
 // const CONFIRM_PROMPT = 'confirmPrompt';
 // const DATE_RESOLVER_DIALOG = 'dateResolverDialog';
 const TEXT_PROMPT = 'TextPrompt';
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
+
+class changeDocument {
+    constructor(request, intent, changeDocument, region) {
+        this.request = request;
+        this.intent = intent;
+        this.changeDocument = changeDocument;
+        this.region = region;
+
+    }
+}
 
 class MainDialog extends ComponentDialog {
     constructor(luisRecognizer, controlDialog){ 
@@ -28,7 +39,8 @@ class MainDialog extends ComponentDialog {
             .addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
                        this.introStep.bind(this),
                        this.luisStep.bind(this),
-                       this.muleStep.bind(this)
+                       this.muleStep.bind(this),
+                       this.finalStep.bind(this)
             ]));
 
         this.initialDialogId = MAIN_WATERFALL_DIALOG;
@@ -57,6 +69,8 @@ class MainDialog extends ComponentDialog {
      */
     async introStep(stepContext) {
 
+        stepContext.values.changeDocument = new changeDocument();
+
         const messageText = stepContext.options.restartMsg ? stepContext.options.restartMsg : 'Try selecting from the options above.';
         const promptMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
         return await stepContext.prompt('TextPrompt', { prompt: promptMessage });
@@ -68,15 +82,18 @@ class MainDialog extends ComponentDialog {
      * Then, it hands off to the bookingDialog child dialog to collect any remaining details.
      */
     async luisStep(stepContext) {
+
         const changeDocuments = {};
 
         //TODO: Ensure that Change Documents array carrying nummber and itent is flown in here.
+        stepContext.values.changeDocument.request = stepContext.result; 
 
-        if (!this.luisRecognizer.isConfigured) {
-            const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
-            await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
-            return await stepContext.next();
-        }
+
+        // if (!this.luisRecognizer.isConfigured) {
+        //     const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
+        //     await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
+        //     return await stepContext.next();
+        // }
 
         if (!this.luisRecognizer.isConfigured) {
             // LUIS is not configured, we just run the controlDialog path.
@@ -122,12 +139,13 @@ class MainDialog extends ComponentDialog {
 
      /**
      * Third step in the waterfall.  This will use mulesoft to attempt to extract details from Solman 
-     * Then, it hands off to the bookingDialog child dialog to collect any remaining details.
      */
     async muleStep(stepContext) {
-        const changeDocuments = {};
 
         //TODO: Ensure that Change Documents array carrying nummber and updated itent is flown in here. 
+        stepContext.values.changeDocument.number = stepContext.result.number; 
+        stepContext.values.changeDocument.intent = stepContext.result.intent; 
+
 
         //TODO: Test the connectivity to Mulesoft 
 
@@ -135,6 +153,45 @@ class MainDialog extends ComponentDialog {
         return await stepContext.next();
     }
 
+     /**
+     * Final step in the waterfall.  This will use display the requsted information back to the user
+     */
+    async finalStep(stepContext) {
+
+        switch (intent)
+        {
+            case "OCTA":                
+                const octaCard = CardFactory.adaptiveCard(OCTACard);
+
+                octaCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.system;
+                octaCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
+                octaCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.crStatus;  // For Code Review Status
+                octaCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.trStatus;  // For Transports Released
+                octaCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.docStatus; // For Documents Approval
+                octaCard.content.actions[0].url = stepContext.values.changeDocument.url;                         // For Updating CD URL
+                await stepContext.context.sendActivity({ attachments: [octaCard] });
+                return await stepContext.next();
+
+            case "review":
+                const reviewCard = CardFactory.adaptiveCard(ReviewCard);
+
+                await stepContext.context.sendActivity({ attachments: [reviewCard] });
+                return await stepContext.next();
+
+            case "status":
+                const statusCard = CardFactory.adaptiveCard(StatusCard);
+
+                await stepContext.context.sendActivity({ attachments: [statusCard] });
+                return await stepContext.next();                
+
+            case "link":
+                const linkCard = CardFactory.adaptiveCard(LinkCard);
+
+                await stepContext.context.sendActivity({ attachments: [linkCard] });
+                return await stepContext.next();      
+    
+        }
+    }
 }
 
 module.exports.MainDialog = MainDialog;

@@ -1,0 +1,148 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Europe SAP",
+                            "horizontalAlignment": "Left",
+                            "size": "ExtraLarge",
+                            "weight": "Bolder",
+                            "color": "Accent",
+                            "spacing": "Small",
+                            "id": "system"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "OC TA Readiness",
+                            "horizontalAlignment": "Left",
+                            "isSubtle": true,
+                            "weight": "Bolder",
+                            "size": "Medium",
+                            "spacing": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "4100000012",
+                            "horizontalAlignment": "Right",
+                            "size": "ExtraLarge",
+                            "weight": "Bolder",
+                            "color": "Accent",
+                            "id": "changeDocument"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "NOT READY",
+                            "horizontalAlignment": "Right",
+                            "size": "Medium",
+                            "color": "Attention",
+                            "spacing": "Small",
+                            "id": "cdStatus"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "separator": true,
+            "spacing": "Medium",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "CHECKLIST",
+                            "isSubtle": true,
+                            "weight": "Bolder"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Code Review",
+                            "spacing": "Small"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Tasks Released",
+                            "spacing": "Small"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Documents Approved",
+                            "spacing": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "STATUS",
+                            "horizontalAlignment": "Center",
+                            "isSubtle": true,
+                            "weight": "Bolder"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Completed",
+                            "horizontalAlignment": "Center",
+                            "color": "Good",
+                            "id": "cdCRStatus"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Incomplete",
+                            "horizontalAlignment": "Right",
+                            "spacing": "Small",
+                            "color": "Attention",
+                            "id": "cdTaskStatus"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Incomplete",
+                            "horizontalAlignment": "Right",
+                            "spacing": "Small",
+                            "color": "Attention",
+                            "id": "cdDocStatus"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Open Change Document",
+            "style": "positive",
+            "url": "http://solmanprd.sap.astrazeneca.net:8880/sap/bc/bsp/sap/crm_ui_start/default.htm?sap-client=001&sap-language=EN&sap-domainRelax=min&saprole=ZOLMANPRO&crm-object-type=AIC_OB_CMNC&crm-object-action=B&crm-object-bolobjectid=FF060101010280003431303200000000010400000000100000003C030000000000000000000000000000000000000000004B00450059BC00000010FA305E5A4F201ED9B4F97EA0DF86C8AFBD04&crm-object-bolobjectname=BTOrder",
+            "id": "cdURL"
+        }
+    ],
+    "id": "OCTA",
+    "lang": "Eng",
+    "selectAction": {
+        "type": "Action.ToggleVisibility",
+        "targetElements": [],
+        "id": "OCTADETAILS",
+        "title": ""
+    }
+}
