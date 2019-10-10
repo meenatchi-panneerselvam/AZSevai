@@ -29,7 +29,7 @@ class CancelAndHelpDialog extends ComponentDialog {
                 return { status: DialogTurnStatus.waiting };
             case 'cancel':
             case 'quit':
-                const cancelMessageText = 'Cancelling...';
+                const cancelMessageText = 'Cancelled. To restart the bot just say "hi" ';
                 await innerDc.context.sendActivity(cancelMessageText, cancelMessageText, InputHints.IgnoringInput);
                 return await innerDc.cancelAllDialogs();
             }

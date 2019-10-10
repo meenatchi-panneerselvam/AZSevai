@@ -71,6 +71,31 @@ class MainDialog extends ComponentDialog {
 
         stepContext.values.changeDocument = new changeDocument();
 
+        let handler = {
+            get: function(target,name){
+                return name in target ?
+                    target[name] :
+                        'Key does not exist';
+            }
+        }
+
+        let p = new Proxy(stepContext.context, handler);
+
+        if(p._activity.text){
+            switch (p._activity.text) {
+                case "hi":
+                    // Restarting the Bot with welcome card re-trigger
+                    break;            
+                default:
+                    // Give a message and exit
+                    const restartMessageText = 'Why not just say "hi" ?';
+                    await stepContext.context.sendActivity(restartMessageText, restartMessageText, InputHints.IgnoringInput);                    
+                    return false;
+            }
+            const welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
+            await stepContext.context.sendActivity({ attachments: [welcomeCard] });
+        }
+
         const messageText = stepContext.options.restartMsg ? stepContext.options.restartMsg : 'Try selecting from the options above.';
         const promptMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
         return await stepContext.prompt('TextPrompt', { prompt: promptMessage });
@@ -84,55 +109,60 @@ class MainDialog extends ComponentDialog {
     async luisStep(stepContext) {
 
         const changeDocuments = {};
+        
+        if(stepContext.result){
 
-        //TODO: Ensure that Change Documents array carrying nummber and itent is flown in here.
-        stepContext.values.changeDocument.request = stepContext.result; 
+            //TODO: Ensure that Change Documents array carrying nummber and itent is flown in here.
+            stepContext.values.changeDocument.request = stepContext.result; 
+            
+            // if (!this.luisRecognizer.isConfigured) {
+            //     const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
+            //     await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
+            //     return await stepContext.next();
+            // }
 
+            if (!this.luisRecognizer.isConfigured) {
+                // LUIS is not configured, we just run the controlDialog path.
+                return await stepContext.beginDialog('controlDialog', changeDocuments);
+            }
 
-        // if (!this.luisRecognizer.isConfigured) {
-        //     const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
-        //     await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
-        //     return await stepContext.next();
-        // }
+            //TODO: Prepare what LUIS should determine from our request 
 
-        if (!this.luisRecognizer.isConfigured) {
-            // LUIS is not configured, we just run the controlDialog path.
-            return await stepContext.beginDialog('controlDialog', changeDocuments);
-        }
+            
 
-        //TODO: Prepare what LUIS should determine from our request 
+            // // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
+            // const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context);
+            // switch (LuisRecognizer.topIntent(luisResult)) {
+            // case 'BookFlight': //TODO: Change this one
+            //     // Extract the values for the composite entities from the LUIS result.
+            //     const fromEntities = this.luisRecognizer.getFromEntities(luisResult);
+            //     const toEntities = this.luisRecognizer.getToEntities(luisResult);
 
-        // // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
-        // const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context);
-        // switch (LuisRecognizer.topIntent(luisResult)) {
-        // case 'BookFlight': //TODO: Change this one
-        //     // Extract the values for the composite entities from the LUIS result.
-        //     const fromEntities = this.luisRecognizer.getFromEntities(luisResult);
-        //     const toEntities = this.luisRecognizer.getToEntities(luisResult);
+            //     // Show a warning for Origin and Destination if we can't resolve them.
+            //     await this.showWarningForUnsupportedCities(stepContext.context, fromEntities, toEntities);
 
-        //     // Show a warning for Origin and Destination if we can't resolve them.
-        //     await this.showWarningForUnsupportedCities(stepContext.context, fromEntities, toEntities);
+            //     // Initialize changeDocuments with any entities we may have found in the response.
+            //     changeDocuments.destination = toEntities.airport;
+            //     changeDocuments.origin = fromEntities.airport;
+            //     changeDocuments.travelDate = this.luisRecognizer.getTravelDate(luisResult);
+            //     console.log('LUIS extracted these booking details:', JSON.stringify(changeDocuments));
 
-        //     // Initialize changeDocuments with any entities we may have found in the response.
-        //     changeDocuments.destination = toEntities.airport;
-        //     changeDocuments.origin = fromEntities.airport;
-        //     changeDocuments.travelDate = this.luisRecognizer.getTravelDate(luisResult);
-        //     console.log('LUIS extracted these booking details:', JSON.stringify(changeDocuments));
+            //     // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
+            //     return await stepContext.beginDialog('controlDialog', changeDocuments);
 
-        //     // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
-        //     return await stepContext.beginDialog('controlDialog', changeDocuments);
+            // case 'GetWeather': //TODO: Change this one
+            //     // We haven't implemented the GetWeatherDialog so we just display a TODO message.
+            //     const getWeatherMessageText = 'TODO: get weather flow here';
+            //     await stepContext.context.sendActivity(getWeatherMessageText, getWeatherMessageText, InputHints.IgnoringInput);
+            //     break;
 
-        // case 'GetWeather': //TODO: Change this one
-        //     // We haven't implemented the GetWeatherDialog so we just display a TODO message.
-        //     const getWeatherMessageText = 'TODO: get weather flow here';
-        //     await stepContext.context.sendActivity(getWeatherMessageText, getWeatherMessageText, InputHints.IgnoringInput);
-        //     break;
+            // default:
+            //     // Catch all for unhandled intents
+            //     const didntUnderstandMessageText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${ LuisRecognizer.topIntent(luisResult) })`;
+            //     await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
+            // }
 
-        // default:
-        //     // Catch all for unhandled intents
-        //     const didntUnderstandMessageText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${ LuisRecognizer.topIntent(luisResult) })`;
-        //     await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
-        // }
+        }      
 
         return await stepContext.next();
     }
@@ -142,14 +172,16 @@ class MainDialog extends ComponentDialog {
      */
     async muleStep(stepContext) {
 
-        //TODO: Ensure that Change Documents array carrying nummber and updated itent is flown in here. 
-        stepContext.values.changeDocument.number = stepContext.result.number; 
-        stepContext.values.changeDocument.intent = stepContext.result.intent; 
+        if(stepContext.result){
+
+            //TODO: Ensure that Change Documents array carrying nummber and updated itent is flown in here. 
+            stepContext.values.changeDocument.number = stepContext.result.number; 
+            stepContext.values.changeDocument.intent = stepContext.result.intent; 
 
 
-        //TODO: Test the connectivity to Mulesoft 
+            //TODO: Test the connectivity to Mulesoft 
 
-
+        }
         return await stepContext.next();
     }
 
@@ -158,39 +190,41 @@ class MainDialog extends ComponentDialog {
      */
     async finalStep(stepContext) {
 
-        switch (intent)
-        {
-            case "OCTA":                
-                const octaCard = CardFactory.adaptiveCard(OCTACard);
+        if(stepContext.values.changeDocument.intent){
+            switch (stepContext.values.changeDocument.intent)
+            {
+                case "OCTA":                
+                    const octaCard = CardFactory.adaptiveCard(OCTACard);
 
-                octaCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.system;
-                octaCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
-                octaCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.crStatus;  // For Code Review Status
-                octaCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.trStatus;  // For Transports Released
-                octaCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.docStatus; // For Documents Approval
-                octaCard.content.actions[0].url = stepContext.values.changeDocument.url;                         // For Updating CD URL
-                await stepContext.context.sendActivity({ attachments: [octaCard] });
-                return await stepContext.next();
+                    octaCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.system;
+                    octaCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
+                    octaCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.crStatus;  // For Code Review Status
+                    octaCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.trStatus;  // For Transports Released
+                    octaCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.docStatus; // For Documents Approval
+                    octaCard.content.actions[0].url = stepContext.values.changeDocument.url;                         // For Updating CD URL
+                    await stepContext.context.sendActivity({ attachments: [octaCard] });
+                    return await stepContext.next();
 
-            case "review":
-                const reviewCard = CardFactory.adaptiveCard(ReviewCard);
+                case "review":
+                    const reviewCard = CardFactory.adaptiveCard(ReviewCard);
 
-                await stepContext.context.sendActivity({ attachments: [reviewCard] });
-                return await stepContext.next();
+                    await stepContext.context.sendActivity({ attachments: [reviewCard] });
+                    return await stepContext.next();
 
-            case "status":
-                const statusCard = CardFactory.adaptiveCard(StatusCard);
+                case "status":
+                    const statusCard = CardFactory.adaptiveCard(StatusCard);
 
-                await stepContext.context.sendActivity({ attachments: [statusCard] });
-                return await stepContext.next();                
+                    await stepContext.context.sendActivity({ attachments: [statusCard] });
+                    return await stepContext.next();          
 
-            case "link":
-                const linkCard = CardFactory.adaptiveCard(LinkCard);
+                case "link":
+                    const linkCard = CardFactory.adaptiveCard(LinkCard);
 
-                await stepContext.context.sendActivity({ attachments: [linkCard] });
-                return await stepContext.next();      
-    
+                    await stepContext.context.sendActivity({ attachments: [linkCard] });
+                    return await stepContext.next();
+            }
         }
+        return await stepContext.next();
     }
 }
 

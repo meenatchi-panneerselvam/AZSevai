@@ -34,27 +34,39 @@ class ControlDialog extends CancelAndHelpDialog {
     async changeDocumentStep(stepContext) {
         const changeDocument = stepContext.options;
 
-        changeDocument.intent = stepContext.parent.result;
+        if(stepContext.parent.result){
 
-        if (!changeDocument.number) {
-            return await stepContext.beginDialog(CD_VALIDATOR_DIALOG, { changeDocument: changeDocument.number });
+            changeDocument.intent = stepContext.parent.result;
+            if (!changeDocument.number) {
+                return await stepContext.beginDialog(CD_VALIDATOR_DIALOG, { changeDocument: changeDocument.number });
+            }
+            return await stepContext.next(changeDocument.number);
+
         }
-        return await stepContext.next(changeDocument.number);
+        return await stepContext.next();
+
     }
 
     /**
      * Confirm the information the user has provided.
      */
     async confirmStep(stepContext) {
-        const changeDocument = stepContext.options;
+         
+        if(stepContext.result){
 
-        // Capture the results of the previous step
-        changeDocument.number = stepContext.result;
-        const messageText = `Please confirm, you would like to know: " ${ changeDocument.intent } " of Change Document with Number : " ${ changeDocument.number } ". Is this correct?`;
-        const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
+            const changeDocument = stepContext.options;
 
-        // Offer a YES/NO prompt.
-        return await stepContext.prompt(CONFIRM_PROMPT, { prompt: msg });
+            // Capture the results of the previous step
+            changeDocument.number = stepContext.result;
+            const messageText = `Please confirm, you would like to know: " ${ changeDocument.intent } " of Change Document with Number : " ${ changeDocument.number } ". Is this correct?`;
+            const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
+
+            // Offer a YES/NO prompt.
+            return await stepContext.prompt(CONFIRM_PROMPT, { prompt: msg });
+
+        }
+        return await stepContext.next();
+
     }
 
     /**
