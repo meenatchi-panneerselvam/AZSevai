@@ -257,8 +257,8 @@ class MainDialog extends ComponentDialog {
 
                 case "link":
                     const linkCard = CardFactory.adaptiveCard(LinkCard);
-                    statusCard.content.actions[0].text = "Open CD " & stepContext.values.changeDocument.number;
-                    statusCard.content.actions[0].url = stepContext.values.changeDocument.url;  // For Updating CD URL
+                    linkCard.content.actions[0].text = "Open CD " & stepContext.values.changeDocument.number;
+                    linkCard.content.actions[0].url = stepContext.values.changeDocument.url;  // For Updating CD URL
                     await stepContext.context.sendActivity({ attachments: [linkCard] });
                     return await stepContext.next();
             }

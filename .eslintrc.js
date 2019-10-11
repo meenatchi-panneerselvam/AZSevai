@@ -12,5 +12,3 @@ module.exports = {
         "template-curly-spacing": [2, "always"]
     }
 };
-//test comment
-//test2
