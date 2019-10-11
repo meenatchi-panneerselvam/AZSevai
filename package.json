@@ -16,12 +16,12 @@
         "url": "https://github.com"
     },
     "dependencies": {
-        "botbuilder": "^4.5.1",
-        "botbuilder-ai": "^4.5.1",
-        "botbuilder-dialogs": "^4.5.1",
+        "botbuilder": "^4.5.3",
+        "botbuilder-ai": "^4.5.3",
+        "botbuilder-dialogs": "^4.5.3",
         "botframework-config": "^4.5.1",
-        "dotenv": "^8.0.0",
-        "restify": "^8.3.3"
+        "dotenv": "^8.1.0",
+        "restify": "^8.4.0"
     },
     "devDependencies": {
         "eslint": "^6.0.1",
