@@ -4,8 +4,8 @@
     "services": [
         {
             "type": "endpoint",
-            "appId": "6c282717-44e0-4f16-b4e4-25d0c1a520da",
-            "appPassword": "9|bT=U?{90KcW!#/q{/[hi6N:[d-qHp0",
+            "appId": "0aec404b-d343-4540-a6a5-412873928786",
+            "appPassword": ">xe6m9XGT{>->u*yRuUTp$7C",
             "endpoint": "http://localhost:3999/api/messages",
             "id": "27c5d130-e6b7-11e9-9d90-c72dde268eb5",
             "name": "http://localhost:3999/api/messages"

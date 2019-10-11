@@ -5,6 +5,7 @@
 const { MessageFactory, InputHints, CardFactory } = require('botbuilder');
 // const { LuisRecognizer } = require('botbuilder-ai');
 const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
+const axios = require('axios');
 
 const WelcomeCard = require('../resources/welcomeCard.json');
 const OCTACard = require('../resources/octaCard.json');
@@ -178,12 +179,20 @@ class MainDialog extends ComponentDialog {
 
 		if (stepContext.result) {
 
-			//TODO: Ensure that Change Documents array carrying nummber and updated itent is flown in here.
 			stepContext.values.changeDocument.number = stepContext.result.number;
 			stepContext.values.changeDocument.intent = stepContext.result.intent;
 
-
 			//TODO: Test the connectivity to Mulesoft
+			// const url = "http://azsevai-demo-oytf.us-e2.cloudhub.io/octa"
+			// const response = await axios({
+			// 	url,
+			// 	method: 'GET'
+			// })
+
+			// console.log(response.data);
+
+			// await stepContext.context.sendActivity(response.data, response.data, InputHints.IgnoringInput);
+			return await stepContext.next();
 
 		}
 		return await stepContext.next();
