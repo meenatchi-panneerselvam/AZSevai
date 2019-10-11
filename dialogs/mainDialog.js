@@ -2,15 +2,15 @@
 // Licensed under the MIT License.
 
 // const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
-import { MessageFactory, InputHints, CardFactory } from 'botbuilder';
+const { MessageFactory, InputHints, CardFactory } = require('botbuilder');
 // const { LuisRecognizer } = require('botbuilder-ai');
-import { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } from 'botbuilder-dialogs';
+const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
 
-import WelcomeCard from '../resources/welcomeCard.json';
-import OCTACard    from '../resources/octaCard.json';
-import ReviewCard  from '../resources/reviewCard.json';
-import StatusCard  from '../resources/statusCard.json';
-import LinkCard    from '../resources/linkCard.json';
+const WelcomeCard = require('../resources/welcomeCard.json');
+const OCTACard    = require('../resources/octaCard.json');
+const ReviewCard  = require('../resources/reviewCard.json');
+const StatusCard  = require('../resources/statusCard.json');
+const LinkCard    = require('../resources/linkCard.json');
 
 // const CONFIRM_PROMPT = 'confirmPrompt';
 // const DATE_RESOLVER_DIALOG = 'dateResolverDialog';
