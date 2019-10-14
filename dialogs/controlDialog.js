@@ -36,7 +36,7 @@ class ControlDialog extends CancelAndHelpDialog {
 
         if(stepContext.parent.result){
 
-            changeDocument.intent = stepContext.parent.result;
+            // changeDocument.intent = stepContext.parent.intent;
             if (!changeDocument.number) {
                 return await stepContext.beginDialog(CD_VALIDATOR_DIALOG, { changeDocument: changeDocument.number });
             }
@@ -58,7 +58,7 @@ class ControlDialog extends CancelAndHelpDialog {
 
             // Capture the results of the previous step
             changeDocument.number = stepContext.result;
-            const messageText = `Please confirm, you would like to know: " ${ changeDocument.intent } " of Change Document with Number : " ${ changeDocument.number } ". Is this correct?`;
+            const messageText = `Please confirm, you would like to know: " ${ changeDocument.request } " of Change Document with Number : " ${ changeDocument.number } ". Is this correct?`;
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
 
             // Offer a YES/NO prompt.

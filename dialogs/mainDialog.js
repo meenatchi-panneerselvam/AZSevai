@@ -19,11 +19,17 @@ const TEXT_PROMPT = 'TextPrompt';
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
 class changeDocument {
-	constructor(request, intent, changeDocument, region) {
+	constructor(request, intent, changeDocument, region, reviewStatus, cdStatus, status1, status2, status3, url) {
 		this.request = request;
 		this.intent = intent;
 		this.changeDocument = changeDocument;
 		this.region = region;
+		this.reviewStatus = reviewStatus;
+		this.cdStatus = cdStatus;
+		this.status1 = status1;
+		this.status2 = status2;
+		this.status3 = status3;
+		this.url = url;
 
 	}
 }
@@ -116,8 +122,26 @@ class MainDialog extends ComponentDialog {
 
 		if (stepContext.result) {
 
-			//TODO: Ensure that Change Documents array carrying nummber and itent is flown in here.
+			//TODO: Ensure that Change Documents array carrying number and itent is flown in here.
 			stepContext.values.changeDocument.request = stepContext.result;
+			changeDocuments.request = stepContext.result;
+			switch (stepContext.result) {
+				case "CD Ready for OCTA":
+					changeDocuments.intent = "OCTA";
+					break;
+				case "CD":
+					changeDocuments.intent = "link";
+					break;					
+				case "CD Status":
+					changeDocuments.intent = "status";
+					break;
+				case "CD Ready for ABAP Review":
+					changeDocuments.intent = "review";
+					break;
+				default:
+					break;
+			}
+
 
 			// if (!this.luisRecognizer.isConfigured) {
 			//     const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
@@ -181,6 +205,15 @@ class MainDialog extends ComponentDialog {
 
 			stepContext.values.changeDocument.number = stepContext.result.number;
 			stepContext.values.changeDocument.intent = stepContext.result.intent;
+			
+			// >>>>> Dummy Data  ( //TODO: Replace with mulesoft response)
+			stepContext.values.changeDocument.region = "Europe SAP";
+			stepContext.values.changeDocument.reviewStatus = "READY";
+			stepContext.values.changeDocument.status1 = "Complete";
+			stepContext.values.changeDocument.status2 = "Complete";
+			stepContext.values.changeDocument.status3 = "Complete";
+			stepContext.values.changeDocument.url = "DummyURL";
+			// <<<<< Dummy Data 
 
 			//TODO: Test the connectivity to Mulesoft
 			// const url = "http://azsevai-demo-oytf.us-e2.cloudhub.io/octa"
@@ -205,21 +238,21 @@ class MainDialog extends ComponentDialog {
 		if (stepContext.values.changeDocument.intent) {
 			switch (stepContext.values.changeDocument.intent) {
 				case "OCTA":
-					const octaCard = CardFactory.adaptiveCard(OCTACard);
+					var octaCard = CardFactory.adaptiveCard(OCTACard);
 
 					// For Updating System and Change Document Number
 					octaCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.region;
 					octaCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
 
 					// For Readiness for OCTA Status (READY or NOT READY)
-					text = octaCard.content.body[0].columns[1].items[2].text = stepContext.values.changeDocument.reviewStatus;
-					octaCard.content.body[0].columns[1].items[2].color = (text = "READY") ? "Good" : "Attention";
+					octaCard.content.body[0].columns[1].items[1].text = stepContext.values.changeDocument.reviewStatus;
+					octaCard.content.body[0].columns[1].items[1].color = (stepContext.values.changeDocument.reviewStatus = "READY") ? "Good" : "Attention";
 
 					octaCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.status1; // For Code Review Status
 					octaCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.status2; // For Transports Released
 					octaCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.status3; // For Documents Approval
 
-					octaCard.content.body[1].columns[1].items.map(function (x) { if (x.text == "READY") { x.color = "Good"; } else { x.color = "Attention"; } return x; })
+					octaCard.content.body[1].columns[1].items.map(function (x) { if (x.text == "Complete") { x.color = "Good"; } else { x.color = "Attention"; } return x; })
 
 					// For Updating CD URL
 					octaCard.content.actions[0].url = stepContext.values.changeDocument.url;
@@ -227,7 +260,7 @@ class MainDialog extends ComponentDialog {
 					return await stepContext.next();
 
 				case "review":
-					const reviewCard = CardFactory.adaptiveCard(ReviewCard);
+					var reviewCard = CardFactory.adaptiveCard(ReviewCard);
 
 					// For Updating System and Change Document Number
 					reviewCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.region;
@@ -249,7 +282,7 @@ class MainDialog extends ComponentDialog {
 					return await stepContext.next();
 
 				case "status":
-					const statusCard = CardFactory.adaptiveCard(StatusCard);
+					var statusCard = CardFactory.adaptiveCard(StatusCard);
 
 					// For Updating System and Change Document Number
 					octaCard.content.body[0].columns[0].items[0].text = stepContext.values.changeDocument.region;
@@ -264,7 +297,7 @@ class MainDialog extends ComponentDialog {
 					return await stepContext.next();
 
 				case "link":
-					const linkCard = CardFactory.adaptiveCard(LinkCard);
+					var linkCard = CardFactory.adaptiveCard(LinkCard);
 					linkCard.content.actions[0].text = "Open CD " & stepContext.values.changeDocument.number;
 					linkCard.content.actions[0].url = stepContext.values.changeDocument.url;  // For Updating CD URL
 					await stepContext.context.sendActivity({ attachments: [linkCard] });
