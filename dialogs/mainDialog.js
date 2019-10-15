@@ -19,16 +19,17 @@ const TEXT_PROMPT = 'TextPrompt';
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
 class changeDocument {
-	constructor(request, intent, changeDocument, region, reviewStatus, cdStatus, status1, status2, status3, url) {
+	constructor(request, intent, changeDocument, region, result, currentStatus, status1, status2, status3, status4, url) {
 		this.request = request;
 		this.intent = intent;
 		this.changeDocument = changeDocument;
 		this.region = region;
-		this.reviewStatus = reviewStatus;
-		this.cdStatus = cdStatus;
+		this.result = result;
+		this.currentStatus = currentStatus;
 		this.status1 = status1;
 		this.status2 = status2;
 		this.status3 = status3;
+		this.status4 = status4;
 		this.url = url;
 
 	}
@@ -127,7 +128,7 @@ class MainDialog extends ComponentDialog {
 			changeDocuments.request = stepContext.result;
 			switch (stepContext.result) {
 				case "CD Ready for OCTA":
-					changeDocuments.intent = "OCTA";
+					changeDocuments.intent = "octa";
 					break;
 				case "CD":
 					changeDocuments.intent = "link";
@@ -138,6 +139,9 @@ class MainDialog extends ComponentDialog {
 				case "CD Ready for ABAP Review":
 					changeDocuments.intent = "review";
 					break;
+				case "CD Ready for Tech Arch Approval":
+					changeDocuments.intent = "archreview";
+					break;					
 				default:
 					break;
 			}
@@ -208,10 +212,12 @@ class MainDialog extends ComponentDialog {
 			
 			// >>>>> Dummy Data  ( //TODO: Replace with mulesoft response)
 			stepContext.values.changeDocument.region = "Europe SAP";
-			stepContext.values.changeDocument.reviewStatus = "READY";
+			stepContext.values.changeDocument.currentStatus = "READY";
+			stepContext.values.changeDocument.result = "READY";
 			stepContext.values.changeDocument.status1 = "Complete";
 			stepContext.values.changeDocument.status2 = "Complete";
 			stepContext.values.changeDocument.status3 = "Complete";
+			stepContext.values.changeDocument.status4 = "Complete";
 			stepContext.values.changeDocument.url = "DummyURL";
 			// <<<<< Dummy Data 
 
@@ -222,6 +228,16 @@ class MainDialog extends ComponentDialog {
 			// 	method: 'GET'
 			// })
 
+			// fetch('http://localhost/api/changeDocuments(objectId='{objectId}',intent='{intent}')')
+			// .then((response) => {
+			// 	return response.text(); // or .json() or .blob() ...
+			// })
+			// .then((text) => {
+			// 	// text is the response body
+			// })
+			// .catch((e) => {
+			// 	// error in e.message
+			// });
 			// console.log(response.data);
 
 			// await stepContext.context.sendActivity(response.data, response.data, InputHints.IgnoringInput);
@@ -245,8 +261,8 @@ class MainDialog extends ComponentDialog {
 					octaCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
 
 					// For Readiness for OCTA Status (READY or NOT READY)
-					octaCard.content.body[0].columns[1].items[1].text = stepContext.values.changeDocument.reviewStatus;
-					octaCard.content.body[0].columns[1].items[1].color = (stepContext.values.changeDocument.reviewStatus = "READY") ? "Good" : "Attention";
+					octaCard.content.body[0].columns[1].items[1].text = stepContext.values.changeDocument.result;
+					octaCard.content.body[0].columns[1].items[1].color = (stepContext.values.changeDocument.result = "READY") ? "Good" : "Attention";
 
 					octaCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.status1; // For Code Review Status
 					octaCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.status2; // For Transports Released
@@ -267,14 +283,15 @@ class MainDialog extends ComponentDialog {
 					reviewCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
 
 					// For Readiness for review Status (READY or NOT READY)
-					reviewCard.content.body[0].columns[1].items[2].text = stepContext.values.changeDocument.reviewStatus;
+					reviewCard.content.body[0].columns[1].items[2].text = stepContext.values.changeDocument.result;
 					reviewCard.content.body[0].columns[1].items[2].color = (text = "READY") ? "Good" : "Attention";
 
 					reviewCard.content.body[1].columns[1].items[1].text = stepContext.values.changeDocument.status1; // For CD In Review Status
 					reviewCard.content.body[1].columns[1].items[2].text = stepContext.values.changeDocument.status2; // For ABAP Notes
-					reviewCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.status3; // For Functional SignOff
+					reviewCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.status3; // For Proposal for Solution
+					reviewCard.content.body[1].columns[1].items[3].text = stepContext.values.changeDocument.status4; // For Functional SignOff					
 
-					reviewCard.content.body[1].columns[1].items.map(function (x) { if (x.text == "READY") { x.color = "Good"; } else { x.color = "Attention"; } return x; })
+					reviewCard.content.body[1].columns[1].items.map(function (x) { if (x.text == "Complete") { x.color = "Good"; } else { x.color = "Attention"; } return x; })
 
 					// For Updating CD URL
 					reviewCard.content.actions[0].url = stepContext.values.changeDocument.url;
@@ -289,7 +306,7 @@ class MainDialog extends ComponentDialog {
 					octaCard.content.body[0].columns[1].items[0].text = stepContext.values.changeDocument.number;
 
 					// For Current CD Status (Color Control Not Required)
-					octaCard.content.body[0].columns[1].items[2].text = stepContext.values.changeDocument.cdStatus;
+					octaCard.content.body[0].columns[1].items[2].text = stepContext.values.changeDocument.currentStatus;
 
 					// For Updating CD URL
 					statusCard.content.actions[0].url = stepContext.values.changeDocument.url;

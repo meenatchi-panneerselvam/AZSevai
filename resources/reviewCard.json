@@ -84,6 +84,11 @@
                         },
                         {
                             "type": "TextBlock",
+                            "text": "Proposal for Solution",
+                            "spacing": "Small"
+                        },
+                        {
+                            "type": "TextBlock",
                             "text": "Functional Signoff",
                             "spacing": "Small"
                         }
@@ -105,7 +110,8 @@
                             "text": "Completed",
                             "horizontalAlignment": "Center",
                             "color": "Good",
-                            "id": "cdReviewStatus"
+                            "id": "cdReviewStatus",
+                            "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
@@ -114,6 +120,13 @@
                             "spacing": "Small",
                             "color": "Attention",
                             "id": "cdABAPNotesStatus"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Incomplete",
+                            "id": "cdProposal",
+                            "color": "Attention",
+                            "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
